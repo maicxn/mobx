@@ -1,4 +1,5 @@
 import { makeObservable, observable, action, computed } from "mobx";
+import { createContext } from "react";
 import { v4 } from "uuid";
 
 interface Todo {
@@ -27,15 +28,17 @@ class TodoStore {
     });
   }
 
-  addTodo = (title: string) => {
-    this.todos.push({ id: v4(), title, completed: false });
+  addTodo = (todo: Todo) => {
+    this.todos.push(todo);
   };
 
   toggleTodo = (id: string) => {
-    const todo = this.todos.find((todo) => todo.id === id);
-    if (todo) {
-      todo.completed = !todo.completed;
-    }
+    this.todos = this.todos.map((todo) => {
+      if (todo.id === id) {
+        return { ...todo, completed: !todo.completed };
+      }
+      return todo;
+    });
   };
 
   removeTodo = (id: string) => {
@@ -50,3 +53,5 @@ class TodoStore {
     };
   }
 }
+
+export default createContext(new TodoStore());
